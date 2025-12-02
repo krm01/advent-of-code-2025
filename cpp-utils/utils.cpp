@@ -26,7 +26,3 @@ bool is_prime(i64 n) {
 
     return true;
 }
-
-std::pair<i64, i64> divrem(i64 a, i64 b) {
-    return { a / b, a % b };
-}

@@ -24,7 +24,6 @@ extern const std::string RESULT_MARK[2];
 
 std::string read_file(const std::string& path);
 bool is_prime(i64 n);
-std::pair<i64, i64> divrem(i64 a, i64 b);
 
 template <typename T>
 requires std::convertible_to<T, std::string> || std::same_as<T, char>
@@ -66,6 +65,3 @@ std::vector<std::string> split(const std::string& value, const T& delimiter) {
 
     return parts;
 }
-
-
-

@@ -12,7 +12,7 @@ bool has_repeats(const std::string& value) {
     }
 
     for (i64 cycle_len = 1; cycle_len <= value.size() / 2; cycle_len++) {
-        auto [n_cycles, rem] = divrem(value.size(), cycle_len);
+        auto [n_cycles, rem] = std::div(value.size(), cycle_len);
 
         // skip any cycles that can't fully repeat
         if (rem != 0) {
@@ -44,5 +44,6 @@ int main() {
         }
     }
 
-    std::cout << "sum: " << sum << "\n";
+    cout << "sum: " << sum << "\n";
+
 }
