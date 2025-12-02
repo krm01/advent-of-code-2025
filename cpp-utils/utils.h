@@ -45,7 +45,6 @@ template <typename T>
 requires std::convertible_to<T, std::string> || std::same_as<T, char>
 std::vector<std::string> split(const std::string& value, const T& delimiter) {
     std::vector<std::string> parts;
-    std::stringstream ss(value);
     size_t pos = 0;
     size_t next = 0;
     std::string delim;
