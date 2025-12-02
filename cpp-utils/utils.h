@@ -3,8 +3,9 @@
 #include <fstream>
 #include <sstream>
 #include <string>
-#include <cstdio>
+#include <iostream>
 #include <cstdint>
+#include <concepts>
 
 using i8   = int8_t;
 using u8   = uint8_t;
@@ -18,5 +19,23 @@ using u64  = uint64_t;
 using f32  = float;
 using f64  = double;
 
-std::string read_file(const std::string& path);
+extern const std::string RESULT_MARK[2];
 
+std::string read_file(const std::string& path);
+bool is_prime(i64 n);
+std::pair<i64, i64> divrem(i64 a, i64 b);
+
+template <typename T>
+requires std::same_as<T, char> || std::same_as<T, std::string>
+std::string repeat(const T& value, size_t n) {
+    if constexpr (std::same_as<T, char>) {
+        return std::string(n, value);
+    } else {
+        std::string ret;
+        ret.reserve(value.size() * n);
+        while (n--) {
+            ret += value;
+        }
+        return ret;
+    }
+}
