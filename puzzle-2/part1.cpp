@@ -1,7 +1,10 @@
 #include "../cpp-utils/utils.h"
 
+using std::cout;
 
-bool has_repeats(const std::string& value) {
+// incorrect logic. this finds repeats of any length, but the question
+// wanted a sequence of digits repeated TWICE.
+bool has_repeats_wrong(const std::string& value) {
     // need at least 2 digits to repeat
     if (value.size() < 2) return false;
 
@@ -26,6 +29,15 @@ bool has_repeats(const std::string& value) {
     return false;
 }
 
+bool has_repeats(const std::string& value) {
+    // need at least 2 digits to repeat
+    if (value.size() < 2) return false;
+    // odd lengths can't be made up of a 2x repeated substring
+    if ((value.size() % 2) != 0) return false;
+
+    return value == repeat(value.substr(0, value.size() / 2), 2);
+}
+
 void test_range() {
     i32 lo = 95;
     i32 hi = 115;
@@ -35,19 +47,23 @@ void test_range() {
 }
 
 int main() {
-    auto content = read_file("input.txt");
+    i64 sum = 0;
 
-    std::string invalids[] = { "987123", "34981251", "875", "98732", "61792347" };
+    auto content = read_file("puzzle-2/input.txt");
+    auto ranges = split(content, ',');
 
-
-    std::string valids[] = { "99", "11", "22", "1010", "222222", "446446", "38593859" };
-    for (const auto& value : valids) {
-        std::cout << RESULT_MARK[has_repeats(value)] << "  " << value << "\n";
+    for (const auto& entry: ranges) {
+        auto range = split(entry, "-");
+        i64 lo = std::stoll(range[0]);
+        i64 hi = std::stoll(range[1]);
+        for (i64 i = lo; i <= hi; i++) {
+            if (has_repeats(std::to_string(i))) {
+                sum += i;
+            }
+        }
     }
 
-    std::cout << "Testing invalid: =====\n";
-    for (const auto& value : invalids) {
-        std::cout << RESULT_MARK[has_repeats(value)] << "  " << value << "\n";
-    }
-
+    std::cout << "sum: " << sum << "\n";
+    /* ATTEMPTS */
+    // 20077272987 TOO HIGH
 }

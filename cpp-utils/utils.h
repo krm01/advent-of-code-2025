@@ -6,6 +6,7 @@
 #include <iostream>
 #include <cstdint>
 #include <concepts>
+#include <vector>
 
 using i8   = int8_t;
 using u8   = uint8_t;
@@ -26,7 +27,7 @@ bool is_prime(i64 n);
 std::pair<i64, i64> divrem(i64 a, i64 b);
 
 template <typename T>
-requires std::same_as<T, char> || std::same_as<T, std::string>
+requires std::convertible_to<T, std::string> || std::same_as<T, char>
 std::string repeat(const T& value, size_t n) {
     if constexpr (std::same_as<T, char>) {
         return std::string(n, value);
@@ -39,3 +40,33 @@ std::string repeat(const T& value, size_t n) {
         return ret;
     }
 }
+
+template <typename T>
+requires std::convertible_to<T, std::string> || std::same_as<T, char>
+std::vector<std::string> split(const std::string& value, const T& delimiter) {
+    std::vector<std::string> parts;
+    std::stringstream ss(value);
+    size_t pos = 0;
+    size_t next = 0;
+    std::string delim;
+
+    if constexpr (std::same_as<T, char>) {
+        delim = std::string(1, delimiter);
+    } else {
+        delim = delimiter;
+    }
+ 
+    while ((next = value.find(delim, pos)) != std::string::npos) {
+        std::string token = value.substr(pos, next);
+        parts.push_back(token);
+        pos = next + delim.size();
+    }
+
+    // add the last token
+    parts.push_back(value.substr(pos));
+
+    return parts;
+}
+
+
+
