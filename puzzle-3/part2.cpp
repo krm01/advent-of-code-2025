@@ -1,18 +1,16 @@
 #include "../cpp-utils/utils.h"
+#include <numeric>
 
 using std::cout;
 
 i64 find_max_joltage(const std::string& bank, i64 n_batteries) {
-    i64 pos = bank.size() - 1;
     std::vector<i64> enabled(n_batteries);
 
     // preload the enabled batteries as the last n in the bank
-    for (i64 i = n_batteries - 1; i >= 0; i--, pos--) {
-        enabled[i] = pos;
-    }
+    // iota is like python's range(start, end)
+    std::iota(enabled.begin(), enabled.end(), bank.size() - n_batteries);
 
-    // pos already set from previous loop
-    for (; pos >= 0; pos--) {
+    for (i64 pos = bank.size() - n_batteries - 1; pos >= 0; pos--) {
         if (bank[pos] >= bank[enabled[0]]) {
             i64 prev_idx = enabled[0];
             enabled[0] = pos;
