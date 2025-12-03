@@ -1,5 +1,4 @@
 #include "../cpp-utils/utils.h"
-#include <cmath>
 
 using std::cout;
 
