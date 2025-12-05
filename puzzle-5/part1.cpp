@@ -4,7 +4,7 @@
 
 using std::cout;
 
-std::vector<std::pair<i64, i64>> condense_ranges(const std::span<std::string>& raw_ranges) {
+std::vector<std::pair<i64, i64>> combine_ranges(const std::span<std::string>& raw_ranges) {
     std::vector<std::pair<i64, i64>> ranges;
     ranges.reserve(raw_ranges.size());
 
@@ -43,7 +43,7 @@ int main() {
     std::span<std::string> ids(lines.begin() + split_idx + 1, lines.end());
 
     i64 n_fresh = 0;
-    auto ranges = condense_ranges(raw_ranges);
+    auto ranges = combine_ranges(raw_ranges);
     for (const auto& id : ids) {
         assert(id != "");
         if (id_in_ranges(ranges, std::stoll(id))) {

@@ -2,11 +2,11 @@ def merge_ranges(ranges):
     ranges.sort(key=lambda it: it[0])
     merged = []
 
-    for start, end in ranges:
-        if not merged or start > merged[-1][1]:
-            merged.append([start, end])
+    for lo, hi in ranges:
+        if not merged or lo > merged[-1][1]:
+            merged.append([lo, hi])
         else:
-            merged[-1][1] = max(merged[-1][1], end)
+            merged[-1][1] = max(merged[-1][1], hi)
 
     return merged
 
