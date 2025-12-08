@@ -82,7 +82,8 @@ i64 create_circuits(const std::vector<std::string>& strPoints) {
         for (i64 k = i+1; k < points.size(); ++k) {
             u64 distsq = distsq_xyz(points[i], points[k]);
 
-            // now store every distance (rip memory)
+            // now store every distance instead of only shortest 1000
+            // since we dont know how many connections will be needed
             distHeap.emplace(points[i].id, points[k].id, distsq);
         }
     }
