@@ -4,14 +4,12 @@
 
 using std::cout;
 
-typedef struct DagNode {
-    std::pair<i64, i64> id;
-    std::pair<i64, i64> left;
-    std::pair<i64, i64> right;
-} DagNode;
+struct DagNode {
+    std::pair<i64, i64> id, left, right;
+};
 
 std::pair<i64, i64> cast_beam(const std::vector<std::string>& lines, i64 row, i64 col) {
-    while (row < lines.size()) {
+    while (row < lines.size() && col <= lines[row].size()) {
         if (lines[row][col] == '^') {
             return { row, col };
         }
@@ -21,14 +19,12 @@ std::pair<i64, i64> cast_beam(const std::vector<std::string>& lines, i64 row, i6
     return { -1, col };
 }
 
-i64 count_beam_timelines(const std::vector<std::string>& lines) {
+std::vector<DagNode> construct_dag(const std::vector<std::string>& lines) {
     std::vector<DagNode> dag;
 
     for (i64 r = 0; r < lines.size(); ++r) {
-        const auto& line = lines[r];
-
-        for (i64 i = 0; i < line.size(); ++i) {
-            if (line[i] == '^') {
+        for (i64 i = 0; i < lines[r].size(); ++i) {
+            if (lines[r][i] == '^') {
                 dag.emplace_back(
                     std::pair<i64, i64> {r, i},
                     cast_beam(lines, r+1, i-1),
@@ -38,32 +34,26 @@ i64 count_beam_timelines(const std::vector<std::string>& lines) {
         }
     }
 
-    // for (const auto& node : dag) {
-    //     cout << "node: (" << node.id.first << "," << node.id.second << ")"
-    //         << "   L: (" << node.left.first  << ", " << node.left.second << ")"
-    //         << "   R: (" << node.right.first  << ", " << node.right.second << ")"
-    //         << "\n";
-    // }
+    return dag;
+}
 
-    std::unordered_map<i64, i64> nPaths;
-    i64 offset = lines[0].size();
-    auto key = [offset](std::pair<i64, i64> k) {
-        return offset * k.first + k.second;
+// assumes the DAG is already sorted (which it will be from the construction logic)
+i64 count_paths(const std::vector<DagNode>& dag, i64 lineWidth) {
+    // pair<int, int> isn't hashable as a key so gotta do it manually
+    auto key = [lineWidth](std::pair<i64, i64> k) {
+        return lineWidth * k.first + k.second;
     };
 
-    // initialize root to 1 for incoming beam from S
-    nPaths[key(dag[0].id)] = 1;
-    for (const auto& node : dag) {
-        nPaths[key(node.left)] += nPaths[key(node.id)];
-        nPaths[key(node.right)] += nPaths[key(node.id)];
-    }
-
-    // sum paths of all unique leaves (row == -1)
     i64 totalPaths = 0;
-    for (const auto& [k, v]: nPaths) {
-        if (k < 0) {
-            totalPaths += v;
-        }
+    std::unordered_map<i64, i64> pathCounts;
+    pathCounts[key(dag[0].id)] = 1;
+
+    for (const auto& node : dag) {
+        i64 nPaths = pathCounts[key(node.id)];
+        pathCounts[key(node.left)] += nPaths;
+        pathCounts[key(node.right)] += nPaths;
+        if (node.left.first == -1) totalPaths += nPaths;
+        if (node.right.first == -1) totalPaths += nPaths;
     }
 
     return totalPaths;
@@ -74,8 +64,8 @@ int main() {
     auto content = read_file("puzzle-7/input.txt");
 
     auto lines = split(content, '\n');
-    i64 nTimelines = count_beam_timelines(lines);
-
+    auto dag = construct_dag(lines);
+    i64 nTimelines = count_paths(dag, lines[0].size());
 
     cout << "timelines: " << nTimelines << "\n";
 }
