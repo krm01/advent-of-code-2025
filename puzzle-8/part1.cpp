@@ -19,7 +19,7 @@ struct DistanceEntry {
 
 struct Comparator {
     bool operator()(const DistanceEntry& a, DistanceEntry& b) const {
-        return a.distsq < b.distsq;
+        return a.distsq < b.distsq; // maxheap (top element is largest)
     }
 };
 
@@ -30,7 +30,6 @@ u64 distsq_xyz(const Point& a, const Point& b) {
     return dx*dx + dy*dy + dz*dz;
 }
 
-// how does C++ not have this built in......
 class UnionFind {
 private:
     std::unordered_map<std::string, std::string> parent;
