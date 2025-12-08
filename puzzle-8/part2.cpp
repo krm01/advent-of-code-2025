@@ -96,13 +96,11 @@ i64 create_circuits(const std::vector<std::string>& strPoints) {
         if (uf.nCircuits == 1) {
             auto ax = std::stoll(split(entry.a, ',')[0]);
             auto bx = std::stoll(split(entry.b, ',')[0]);
-
             return ax * bx;
         }
  
         distHeap.pop();
     }
-
     return -1;
 }
 
@@ -110,10 +108,7 @@ i64 create_circuits(const std::vector<std::string>& strPoints) {
 int main() {
     // auto content = read_file("puzzle-8/test-input.txt");
     auto content = read_file("puzzle-8/input.txt");
-
     auto lines = split(content, '\n');
-
     i64 wallDist = create_circuits(lines);
-
     cout << "solution: " << wallDist << "\n";
 }
