@@ -1,5 +1,4 @@
 #include "../cpp-utils/utils.h"
-
 #include <unordered_map>
 
 using std::cout;
