@@ -87,7 +87,7 @@ create_circuits(const std::vector<std::string>& strPoints, i64 nConnections) {
         distHeap.pop();
     }
 
-    // merge 'em. basically combine overlapping sets (the whole point of UnionFind)
+    // extract the circuits formed grouped by root (the actual root doesn't matter, just grouping)
     std::unordered_map<std::string, std::unordered_set<std::string>> circuitsByRoot;
     for (const auto& point : points) {
         circuitsByRoot[uf.find(point.id)].insert(point.id);
