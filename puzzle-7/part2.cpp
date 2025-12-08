@@ -20,9 +20,11 @@ std::pair<i64, i64> cast_beam(const std::vector<std::string>& lines, i64 row, i6
 
 std::vector<DagNode> construct_dag(const std::vector<std::string>& lines) {
     std::vector<DagNode> dag;
+    i64 center = lines[0].find('S');
 
     for (i64 r = 2; r < lines.size(); r+=2) {
-        for (i64 i = 0; i < lines[r].size(); ++i) {
+        i64 spread = r / 2 - 1;
+        for (i64 i = center - spread; i <= center + spread; ++i) {
             if (lines[r][i] == '^') {
                 dag.emplace_back(
                     std::pair<i64, i64> {r, i},
