@@ -60,8 +60,10 @@ std::vector<std::string> split(const std::string& value, const T& delimiter) {
         pos = next + delim.size();
     }
 
-    // add the last token
-    parts.emplace_back(value.substr(pos));
+    // add the last token if it's not empty
+    if (value.substr(pos) != "") {
+        parts.emplace_back(value.substr(pos));
+    }
 
     return parts;
 }
