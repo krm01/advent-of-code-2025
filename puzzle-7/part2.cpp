@@ -21,7 +21,7 @@ std::pair<i64, i64> cast_beam(const std::vector<std::string>& lines, i64 row, i6
 std::vector<DagNode> construct_dag(const std::vector<std::string>& lines) {
     std::vector<DagNode> dag;
 
-    for (i64 r = 0; r < lines.size(); ++r) {
+    for (i64 r = 2; r < lines.size(); r+=2) {
         for (i64 i = 0; i < lines[r].size(); ++i) {
             if (lines[r][i] == '^') {
                 dag.emplace_back(
