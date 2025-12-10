@@ -27,16 +27,26 @@ bool is_rect_inside(const EdgeList& xEdgeList, const EdgeList& yEdgeList, const 
     // by checking the edgeList for intersections. if no edges
     // the rectangle MUST be fully inside the greater polygon
     for (const auto& [x, edges] : xEdgeList) {
-        if (x <= topLeft.x || x >= topRight.x) continue;
+        if (x <= topLeft.x || x >= topRight.x) {
+            continue;
+        }
+
         for (const auto& [yMin, yMax] : edges) {
-            if (yMin < topRight.y && yMax > topLeft.y) return false;
+            if (yMin < topRight.y && yMax > topLeft.y) {
+                return false;
+            }
         }
     }
     
     for (const auto& [y, edges] : yEdgeList) {
-        if (y <= topLeft.y || y >= topRight.y) continue;
+        if (y <= topLeft.y || y >= topRight.y) {
+            continue;
+        }
+
         for (const auto& [xMin, xMax] : edges) {
-            if (xMin < topRight.x && xMax > topLeft.x) return false;
+            if (xMin < topRight.x && xMax > topLeft.x) {
+                return false;
+            }
         }
     }
     
