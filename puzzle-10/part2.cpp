@@ -5,27 +5,15 @@ using std::cout;
 
 class Machine {
 private:
-    u64 mPressedCount;
-    u16 mSolutionPattern;
-    u16 mCurrentPattern;
     std::vector<u16> mButtons;
     std::vector<u16> mJoltageSolution;
     std::vector<u16> mCurrentJoltages;
 
 public:
     Machine(const std::string& line) {
-        mPressedCount = 0;
-        mCurrentPattern = 0;
-        mSolutionPattern = Machine::ParseLights(line);
         mButtons = Machine::ParseButtons(line);
         mJoltageSolution = Machine::ParseJoltages(line);
         mCurrentJoltages.resize(mJoltageSolution.size());
-    }
-
-    bool pressButtonLights(u16 buttonIdx) {
-        mCurrentPattern ^= mButtons.at(buttonIdx);
-        ++mPressedCount;
-        return mCurrentPattern == mSolutionPattern;
     }
 
     void pressButtonJoltage(u16 buttonIdx) {
@@ -41,13 +29,7 @@ public:
     }
 
     void reset() {
-        mCurrentPattern = 0;
-        mPressedCount = 0;
         mCurrentJoltages.assign(mCurrentJoltages.size(), 0);
-    }
-
-    bool isLightPatternSolved() {
-        return mCurrentPattern == mSolutionPattern;
     }
 
     bool isJoltageCountSolved() {
@@ -59,10 +41,7 @@ public:
     }
 
     void debugPrintState() const {
-        cout << ((mSolutionPattern == mCurrentPattern) ? "✅ SOLVED! \n" : "\n")
-             << "solution: " << std::bitset<16>(mSolutionPattern) << "\n"
-             << "current : " << std::bitset<16>(mCurrentPattern) << "\n"
-             << "presses : " << mPressedCount << "\n"
+        cout << ((mCurrentJoltages == mJoltageSolution) ? "✅ SOLVED! \n" : "\n")
              << "buttons : ";
 
         for (const auto& button : mButtons) {
@@ -78,18 +57,6 @@ public:
     }
 
 private:
-    static u16 ParseLights(const std::string& input) {
-        // for this problem we know there's never more than 16 lights
-        u16 pattern = 0;
-        for (i64 i = 1; i < input.find_first_of(']'); ++i) {
-            if (input.at(i) == '#') {
-                pattern |= 1 << (i - 1);
-            }
-        }
-
-        return pattern;
-    }
-
     static std::vector<u16> ParseButtons(const std::string& input) {
         std::vector<u16> buttons;
 
@@ -171,8 +138,8 @@ i64 solve_machines(std::vector<Machine>& machines) {
 }
 
 int main() {
-    // auto content = read_file("puzzle-10/test-input.txt");
-    auto content = read_file("puzzle-10/input.txt");
+    auto content = read_file("puzzle-10/test-input.txt");
+    // auto content = read_file("puzzle-10/input.txt");
 
     std::vector<Machine> machines;
     for (const auto& line : split(content, '\n')) {
@@ -181,5 +148,9 @@ int main() {
 
     i64 solution = solve_machines(machines);
 
+    cout << "test input solution, machine 1: 10 presses.\n";
+    cout << "test input solution, machine 2: 12 presses.\n";
+    cout << "test input solution, machine 3: 11 presses.\n";
+    cout << "test input expected answer: 33 total presses.\n";
     cout << "solution: " << solution << "\n";
 }
