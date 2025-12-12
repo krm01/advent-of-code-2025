@@ -141,6 +141,12 @@ int main() {
     auto content = read_file("puzzle-10/test-input.txt");
     // auto content = read_file("puzzle-10/input.txt");
 
+    cout << "This solution technically could work for the real puzzle "
+        << "input, but i might die before it finishes. solving this "
+        << "quickly requires more math than i'm willing to implement.";
+
+    return 0;
+
     std::vector<Machine> machines;
     for (const auto& line : split(content, '\n')) {
         machines.emplace_back(line);
@@ -148,9 +154,5 @@ int main() {
 
     i64 solution = solve_machines(machines);
 
-    cout << "test input solution, machine 1: 10 presses.\n";
-    cout << "test input solution, machine 2: 12 presses.\n";
-    cout << "test input solution, machine 3: 11 presses.\n";
-    cout << "test input expected answer: 33 total presses.\n";
     cout << "solution: " << solution << "\n";
 }
