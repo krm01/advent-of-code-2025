@@ -9,6 +9,8 @@ private:
     u16 mSolutionPattern;
     u16 mCurrentPattern;
     std::vector<u16> mButtons;
+    std::vector<u16> mJoltageSolution;
+    std::vector<u16> mCurrentJoltages;
 
 public:
     Machine(const std::string& line) {
@@ -16,21 +18,40 @@ public:
         mCurrentPattern = 0;
         mSolutionPattern = Machine::ParseLights(line);
         mButtons = Machine::ParseButtons(line);
+        mJoltageSolution = Machine::ParseJoltages(line);
+        mCurrentJoltages.resize(mJoltageSolution.size());
     }
 
-    bool pressButton(size_t buttonIdx) {
+    bool pressButtonLights(u16 buttonIdx) {
         mCurrentPattern ^= mButtons.at(buttonIdx);
         ++mPressedCount;
         return mCurrentPattern == mSolutionPattern;
     }
 
+    void pressButtonJoltage(u16 buttonIdx) {
+        u16 button = mButtons.at(buttonIdx);
+        u16 i = 0;
+        while (i < 16) {
+            u16 pressed = (button >> i) & 0x1;
+            if (pressed) {
+                ++mCurrentJoltages.at(i);
+            }
+            ++i;
+        }
+    }
+
     void reset() {
         mCurrentPattern = 0;
         mPressedCount = 0;
+        mCurrentJoltages.assign(mCurrentJoltages.size(), 0);
     }
 
     bool isLightPatternSolved() {
         return mCurrentPattern == mSolutionPattern;
+    }
+
+    bool isJoltageCountSolved() {
+        return mCurrentJoltages == mJoltageSolution;
     }
 
     i64 numButtons() {
@@ -46,6 +67,12 @@ public:
 
         for (const auto& button : mButtons) {
             cout << "(" << std::bitset<16>(button) << ") ";
+        }
+
+        cout << "\njoltages: ";
+
+        for (i64 i = 0; i < mJoltageSolution.size(); ++i) {
+            cout << "{" << mCurrentJoltages.at(i) << "," << mJoltageSolution.at(i) << "} ";
         }
         cout << "\n------------------\n";
     }
@@ -65,7 +92,7 @@ private:
 
     static std::vector<u16> ParseButtons(const std::string& input) {
         std::vector<u16> buttons;
-        buttons.reserve(10);
+
         for (i64 i = input.find_first_of('(') + 1; i < input.find_first_of('{') - 1;) {
             i64 length = input.find_first_of(')', i) - i;
             u16 button = 0;
@@ -79,6 +106,18 @@ private:
 
         return buttons;
     }
+
+    static std::vector<u16> ParseJoltages(const std::string& input) {
+        std::vector<u16> joltages;
+
+        i64 begin = input.find_first_of('{') + 1;
+        const auto view = input.substr(begin, input.find_first_of('}') - begin);
+        for (const auto& value : split(view, ',')) {
+            joltages.emplace_back(std::stoll(value));
+        }
+
+        return joltages;
+    }
 };
 
 // try to solve by iterating all the (n multichoose k) elements: C(n+k-1, k)
@@ -91,10 +130,10 @@ i64 brute_force_solve(Machine& machine) {
         while (true) {
             machine.reset();
             for (i64 i = 0; i < pattern.size(); ++i) {
-                machine.pressButton(pattern[i]);
+                machine.pressButtonJoltage(pattern[i]);
             }
 
-            if (machine.isLightPatternSolved()) {
+            if (machine.isJoltageCountSolved()) {
                 return k;
             }
 
@@ -121,8 +160,11 @@ i64 brute_force_solve(Machine& machine) {
 i64 solve_machines(std::vector<Machine>& machines) {
     i64 sumOfMinPresses = 0;
 
+    i64 i = 0;
     for (auto& machine : machines) {
         sumOfMinPresses += brute_force_solve(machine);
+        cout << "[" << i << "] ";
+        machine.debugPrintState();
     }
 
     return sumOfMinPresses;
